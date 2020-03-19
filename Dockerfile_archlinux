@@ -3,7 +3,8 @@ FROM archlinux:latest
 # Install dependencies
 RUN pacman -Syyuu \
     base-devel \
-    cmake clang \
+    cmake \
+    clang \
     python \
     python-pip \
     --noconfirm
