@@ -12,7 +12,7 @@ cpp_args = ['-std=c++17']
 # include directories
 include_dirs = [incdir, './pybind11/include', './SEAL/native/src']
 # library path
-extra_objects = ['./SEAL/native/lib/libseal-3.4.a']
+extra_objects = ['./SEAL/native/lib/libseal.so']
 
 if(platform.system() == "Windows"):
     cpp_args[0] = '/std:c++latest'
