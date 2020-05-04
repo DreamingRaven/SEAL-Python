@@ -51,7 +51,17 @@ PYBIND11_MODULE(seal, m)
 		.def("scheme", &EncryptionParameters::scheme)
 		.def("poly_modulus_degree", &EncryptionParameters::poly_modulus_degree)
 		.def("coeff_modulus", &EncryptionParameters::coeff_modulus)
-		.def("plain_modulus", &EncryptionParameters::plain_modulus);
+		.def("plain_modulus", &EncryptionParameters::plain_modulus)
+		.def("save", [](const EncryptionParameters &p, std::string &path) {
+			std::ofstream out(path, std::ofstream::binary);
+			p.save(out);
+			out.close();
+		})
+		.def("load", [](EncryptionParameters &p, std::string &path) {
+			std::ifstream in(path, std::ifstream::binary);
+			p.load(in);
+			in.close();
+		});
 
 	// context.h
 	py::class_<EncryptionParameterQualifiers, std::unique_ptr<EncryptionParameterQualifiers, py::nodelete>>(m, "EncryptionParameterQualifiers")
@@ -107,8 +117,8 @@ PYBIND11_MODULE(seal, m)
 
 	// modulus.h
 	py::class_<PlainModulus>(m, "PlainModulus")
-		.def("Batching", [](std::size_t poly_modulus_degree, int bit_size) { return PlainModulus::Batching(poly_modulus_degree, bit_size); })
-		.def("Batching", [](std::size_t poly_modulus_degree, std::vector<int> bit_sizes) { return PlainModulus::Batching(poly_modulus_degree, bit_sizes); });
+		.def_static("Batching", [](std::size_t poly_modulus_degree, int bit_size) { return PlainModulus::Batching(poly_modulus_degree, bit_size); })
+		.def_static("Batching", [](std::size_t poly_modulus_degree, std::vector<int> bit_sizes) { return PlainModulus::Batching(poly_modulus_degree, bit_sizes); });
 
 	// plaintext.h
 	py::class_<Plaintext>(m, "Plaintext")
@@ -320,7 +330,7 @@ PYBIND11_MODULE(seal, m)
 		.def("add_plain_inplace", (void (Evaluator::*)(Ciphertext &, const Plaintext &)) & Evaluator::add_plain_inplace)
 		.def("add_plain", (void (Evaluator::*)(const Ciphertext &, const Plaintext &, Ciphertext &)) & Evaluator::add_plain)
 		.def("sub_plain_inplace", (void (Evaluator::*)(Ciphertext &, const Plaintext &)) & Evaluator::sub_plain_inplace)
-		.def("sub_plain", (void (Evaluator::*)(const Ciphertext &, const Plaintext &)) & Evaluator::sub_plain)
+		.def("sub_plain", (void (Evaluator::*)(const Ciphertext &, const Plaintext &, Ciphertext &)) & Evaluator::sub_plain)
 		.def("multiply_plain_inplace", (void (Evaluator::*)(Ciphertext &, const Plaintext &, MemoryPoolHandle)) & Evaluator::multiply_plain_inplace,
 			 py::arg(), py::arg(), py::arg() = MemoryManager::GetPool())
 		.def("multiply_plain", (void (Evaluator::*)(const Ciphertext &, const Plaintext &, Ciphertext &, MemoryPoolHandle)) & Evaluator::multiply_plain,
