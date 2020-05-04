@@ -1,0 +1,40 @@
+FROM archlinux:latest
+
+# Install dependencies
+RUN pacman -Syyuu \
+    base-devel \
+    cmake \
+    gcc \
+    python \
+    python-pip \
+    --noconfirm
+
+# Copy all files to container
+COPY ./ /seal-python
+
+# Build SEAL
+RUN cd /seal-python/SEAL/native/src && \
+    cmake . && \
+    make && \
+    make install && \
+    echo "/usr/local/lib" >> /etc/ld.so.conf.d/seal.conf
+
+# Install requirements
+RUN cd /seal-python && \
+    pip3 install -r requirements.txt
+
+# Build pybind11
+RUN cd /seal-python/pybind11 && \
+    mkdir build && \
+    cd /seal-python/pybind11/build && \
+    cmake .. && \
+    make check -j 4 && \
+    make install
+
+# Build wrapper
+RUN cd /seal-python && \
+    python3 setup.py build_ext -i && \
+    python3 setup.py install
+
+# Clean-up
+RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
