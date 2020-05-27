@@ -62,6 +62,14 @@ PYBIND11_MODULE(seal, m)
 			p.load(in);
 			in.close();
 		});
+		.def("__getstate__", [](py::object self){
+			return py::make_tuple(
+				// ... whatever goes here probably seal save ...
+			);
+		})
+		.def("__setstate__", [](py::object self, py::tuple t){
+			return ;// ... whatever goes here probably seal load from tuple saved
+		})
 
 	// context.h
 	py::class_<EncryptionParameterQualifiers, std::unique_ptr<EncryptionParameterQualifiers, py::nodelete>>(m, "EncryptionParameterQualifiers")
