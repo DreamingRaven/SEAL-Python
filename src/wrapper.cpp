@@ -63,12 +63,14 @@ PYBIND11_MODULE(seal, m)
 			in.close();
 		});
 		.def("__getstate__", [](py::object self){
-			return py::make_tuple(
-				// ... whatever goes here probably seal save ...
-			);
+      vector<SEAL_BYTE> byte_buffer(static_cast<size_t>(self.save_size()));
+      self.save(reinterpret_cast<SEAL_BYTE *>(byte_buffer.data()), byte_buffer.size());
+			return byte_buffer;
 		})
-		.def("__setstate__", [](py::object self, py::tuple t){
-			return ;// ... whatever goes here probably seal load from tuple saved
+		.def("__setstate__", [](py::object self, vector<SEAL_BYTE> byte_buffer){
+      EncryptionParameters parms2;
+      parms2.load(reinterpret_cast<const SEAL_BYTE *>(byte_buffer.data()), byte_buffer.size());
+			return parms2;
 		})
 
 	// context.h
