@@ -1,6 +1,7 @@
 from seal import *
 from seal_helper import *
 import numpy as np
+import copy
 
 
 def example_data_type():
@@ -25,6 +26,8 @@ def example_serialize():
     parms.set_poly_modulus_degree(poly_modulus_degree)
     parms.set_coeff_modulus(CoeffModulus.BFVDefault(poly_modulus_degree))
     parms.set_plain_modulus(256)
+
+    copy.deepcopy(parms)
 
     parms.save("parms")
     parms_loaded = EncryptionParameters(scheme_type.BFV)
