@@ -63,12 +63,12 @@ PYBIND11_MODULE(seal, m)
 			in.close();
 		})
 		.def("save_size", &EncryptionParameters::save_size)
-    .def("__getstate__", [](const EncryptionParameters &self) {
-      vector<SEAL_BYTE> byte_buffer(static_cast<size_t>(self.save_size(compr_mode_type::none)));
-      self.save(reinterpret_cast<SEAL_BYTE *>(byte_buffer.data()), byte_buffer.size());
+		.def("__getstate__", [](const EncryptionParameters &self) {
+			vector<SEAL_BYTE> byte_buffer(static_cast<size_t>(self.save_size(compr_mode_type::none)));
+			self.save(reinterpret_cast<SEAL_BYTE *>(byte_buffer.data()), byte_buffer.size());
 			return byte_buffer;
     })
-    .def("__setstate__", [](EncryptionParameters &self, vector<SEAL_BYTE> byte_buffer) {
+		.def("__setstate__", [](EncryptionParameters &self, vector<SEAL_BYTE> byte_buffer) {
 			new (&self) EncryptionParameters();
 			self.load(reinterpret_cast<const SEAL_BYTE *>(byte_buffer.data()), byte_buffer.size());
     }
