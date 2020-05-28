@@ -61,17 +61,18 @@ PYBIND11_MODULE(seal, m)
 			std::ifstream in(path, std::ifstream::binary);
 			p.load(in);
 			in.close();
-		});
-		.def("__getstate__", [](py::object self){
-      vector<SEAL_BYTE> byte_buffer(static_cast<size_t>(self.save_size()));
+		})
+		.def("save_size", &EncryptionParameters::save_size)
+    .def("__getstate__", [](EncryptionParameters &self) {
+      vector<SEAL_BYTE> byte_buffer(static_cast<size_t>(self.save_size(compr_mode_type::none)));
       self.save(reinterpret_cast<SEAL_BYTE *>(byte_buffer.data()), byte_buffer.size());
 			return byte_buffer;
-		})
-		.def("__setstate__", [](py::object self, vector<SEAL_BYTE> byte_buffer){
-      EncryptionParameters parms2;
-      parms2.load(reinterpret_cast<const SEAL_BYTE *>(byte_buffer.data()), byte_buffer.size());
-			return parms2;
-		})
+    })
+    .def("__setstate__", [](EncryptionParameters &self, vector<SEAL_BYTE> byte_buffer) {
+			new (&self) EncryptionParameters();
+			self.load(reinterpret_cast<const SEAL_BYTE *>(byte_buffer.data()), byte_buffer.size());
+    }
+	);
 
 	// context.h
 	py::class_<EncryptionParameterQualifiers, std::unique_ptr<EncryptionParameterQualifiers, py::nodelete>>(m, "EncryptionParameterQualifiers")
