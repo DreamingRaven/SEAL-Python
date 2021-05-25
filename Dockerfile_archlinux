@@ -17,7 +17,8 @@ RUN cd /seal-python/SEAL/native/src && \
     cmake . && \
     make && \
     make install && \
-    echo "/usr/local/lib" >> /etc/ld.so.conf.d/seal.conf
+    echo "/usr/local/lib" >> /etc/ld.so.conf.d/seal.conf && \
+    ldconfig
 
 # Install requirements
 RUN cd /seal-python && \

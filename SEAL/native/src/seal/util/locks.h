@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include <mutex>
 #include "seal/util/defines.h"
 
 #ifdef SEAL_USE_SHARED_MUTEX
